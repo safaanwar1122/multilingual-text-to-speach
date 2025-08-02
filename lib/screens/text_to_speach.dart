@@ -47,6 +47,8 @@ bool _hasShownVoiceWarning=false;
             Get.closeCurrentSnackbar();
           }, child:const Icon(Icons.close, color: Colors.white),),
         );
+        final ttsProvider = Provider.of<TTSProvider>(context, listen: false);
+        ttsProvider.ensureSelectedLanguageIsValid();
       });
     }
   }

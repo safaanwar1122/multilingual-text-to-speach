@@ -46,7 +46,7 @@ class TTSProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  List<String> get availableOutputLanguages {
+ /* List<String> get availableOutputLanguages {
     if (!_hasSpoken || _detectedLanguage.isEmpty) {
       return supportedLanguages;
     }
@@ -60,6 +60,22 @@ class TTSProvider with ChangeNotifier {
     }
 
     return filtered;
+  }*/
+
+  List<String> get availableOutputLanguages {
+    if (!_hasSpoken || _detectedLanguage.isEmpty) {
+      return supportedLanguages;
+    }
+
+    return supportedLanguages.where((lang) => lang != _detectedLanguage).toList();
+  }
+  void ensureSelectedLanguageIsValid() {
+    final filtered = availableOutputLanguages;
+
+    if (!filtered.contains(selectedLanguage)) {
+      selectedLanguage = filtered.isNotEmpty ? filtered.first : supportedLanguages.first;
+      notifyListeners(); // Safe to notify here outside of build
+    }
   }
 
 
