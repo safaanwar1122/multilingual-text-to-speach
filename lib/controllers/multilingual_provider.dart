@@ -3,9 +3,12 @@ import 'package:flutter_langdetect/flutter_langdetect.dart' as langdetect;
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:get/get.dart';
 import 'package:multilingual_text_to_speech/utils/app_colors.dart';
-
 import 'package:google_mlkit_language_id/google_mlkit_language_id.dart';
 import 'package:translator/translator.dart';
+
+
+
+
 
 class TTSProvider with ChangeNotifier {
   TextEditingController textController = TextEditingController();
@@ -42,11 +45,22 @@ class TTSProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  /*void updateSelectedLanguage(String value) {
-    selectedLanguage = value;
-    notifyListeners();
+  List<String> get availableOutputLanguages {
+    if (!_hasSpoken || _detectedLanguage.isEmpty) {
+      return supportedLanguages;
+    }
+
+    final filtered = supportedLanguages.where((lang) => lang != _detectedLanguage).toList();
+
+    // If current selected language is not in the filtered list, reset it safely
+    if (!filtered.contains(selectedLanguage)) {
+      selectedLanguage = filtered.isNotEmpty ? filtered.first : supportedLanguages.first;
+      notifyListeners(); // Update dropdown if needed
+    }
+
+    return filtered;
   }
-*/
+
 
   void updateSelectedLanguage(String languageCode) async {
     selectedLanguage = languageCode;
@@ -123,28 +137,6 @@ class TTSProvider with ChangeNotifier {
     }
   }
 
-  /* Future<void> togglePlayPause()async{
-    if(!_hasSpoken || _translatedText.isEmpty){
-      return;
-    }
-    if(_isPlaying){
-      await _flutterTts.pause();
-      _isPlaying=false;
-    }
-    else {
-      await _flutterTts.setLanguage(selectedLanguage);
-      await _flutterTts.setSpeechRate(_speechRate);
-      await _flutterTts.speak(_translatedText);
-      await _flutterTts.setPitch(_pitch);
-      _isPlaying=true;
-    }
-    notifyListeners();
-  }
-  void stop()async{
-    await _flutterTts.stop();
-    _isPlaying=false;
-    notifyListeners();
-  }*/
   Future<void> handlePlayPauseUnified() async {
     final inputText = textController.text.trim();
     _lastProcessesText = inputText.trim();
@@ -205,93 +197,3 @@ class TTSProvider with ChangeNotifier {
     notifyListeners();
   }
 }
-
-/*
-
-class MultilingualProvider with ChangeNotifier {
-  TextEditingController textController = TextEditingController();
-  final FlutterTts _flutterTTS = FlutterTts();
-  String _selectedLanguageCode = 'en-US';
- double _speechRate=1.0;
- double _pitch=1.0;
- bool _isPlaying=false;
- bool get isPlaying=>_isPlaying;
-
- double get pitch=>_pitch;
- void setPitch(double value){
-   _pitch=value;
-   notifyListeners();
- }
- double get speechRate=>_speechRate;
- void setSpeechRate(double rate){
-   _speechRate=rate;
-   notifyListeners();
- }
-
-  String get selectedLanguageCode => _selectedLanguageCode;
-  final List<Map<String, String>> languages = [
-    {'name': 'English', 'code': 'en-US'},
-    {'name': 'French', 'code': 'fr-FR'},
-    {'name': 'Spanish', 'code': 'es-ES'},
-    {'name': 'German', 'code': 'de-DE'},
-  ];
-  void setLanguageCode(String code) {
-    _selectedLanguageCode = code;
-    notifyListeners();
-  }
-
-  Future<void> speakText(BuildContext context) async {
-    String text = textController.text.trim();
-    if (text.isEmpty) return;
-    final detected = langdetect.detect(text);
-    final selectedLang = _selectedLanguageCode.split('-').first;
-    final supported = languages
-        .map((l) => l['code']!.split('-').first)
-        .toList();
-    if (!supported.contains(detected)) {
-      Get.snackbar(
-        'Error',
-        'Language not supported',
-        backgroundColor: AppColors.red.withOpacity(0.8),
-        colorText: AppColors.white,
-        snackPosition: SnackPosition.BOTTOM,
-        duration: Duration(seconds: 2),
-      );
-      return;
-    }
-
-    if (detected != selectedLang) {
-      Get.snackbar(
-        'Error',
-        'Please select relevant language',
-        backgroundColor: AppColors.red.withOpacity(0.8),
-        colorText: AppColors.white,
-        snackPosition: SnackPosition.BOTTOM,
-        duration: Duration(seconds: 2),
-      );
-      return;
-    }
-    await _flutterTTS.setLanguage(_selectedLanguageCode);
-    await _flutterTTS.setPitch(_pitch);
-    await _flutterTTS.setSpeechRate(_speechRate);
-
-_isPlaying=true;
-notifyListeners();
-
-    await _flutterTTS.speak(text);
-    _flutterTTS.setCompletionHandler((){
-      _isPlaying=false;
-      notifyListeners();
-    });
-    _flutterTTS.setErrorHandler((message){
-      _isPlaying=false;
-      notifyListeners();
-    });
-  }
-  Future<void>pauseSpeech()async{
-    await _flutterTTS.pause();
-    _isPlaying=false;
-    notifyListeners();
-  }
-}
-*/
