@@ -93,6 +93,9 @@ bool _hasShownVoiceWarning=false;
                     if (value == null || value.trim().isEmpty) {
                       return 'Please enter some text';
                     }
+                    if(value.trim().length<10){
+                      return 'Please enter at least 20 characters';
+                    }
                     return null;
                   },
                 ),
@@ -165,9 +168,9 @@ bool _hasShownVoiceWarning=false;
                         padding:  EdgeInsets.symmetric(vertical: 12.h, horizontal: 8.w),
 
                         decoration: BoxDecoration(
-                          color: AppColors.grey.withOpacity(0.2),
+                          color: AppColors.white,
                           borderRadius: BorderRadius.circular(12.r),
-                          border: Border.all(color: AppColors.grey.withOpacity(0.4),),
+                          border: Border.all(color: AppColors.blue),
                         ),
                         child: customText(
                           text: "Translated Text: ${ttsProvider.translatedText}",

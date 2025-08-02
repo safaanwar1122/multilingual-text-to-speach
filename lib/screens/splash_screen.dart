@@ -23,7 +23,7 @@ class SplashScreen extends StatelessWidget {
       ),
     );
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      Future.delayed(const Duration(seconds: 1), () {
+      Future.delayed(const Duration(seconds: 3), () {
         Get.offAll(() =>
         TTSScreen(),
         );
