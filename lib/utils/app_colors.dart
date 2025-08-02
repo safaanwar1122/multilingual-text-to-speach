@@ -9,4 +9,5 @@ class AppColors{
   static const black=Color(0xFF000000);
   static const green=Color(0xFF4CAF50);
   static const pink=Color(0xFFF06292);
+
 }

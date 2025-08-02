@@ -18,6 +18,7 @@ class TTSProvider with ChangeNotifier {
   final translator = GoogleTranslator();
 
   final List<String> supportedLanguages = ['en', 'fr', 'es', 'de'];
+
   String _detectedLanguage = '';
   String _translatedText = '';
   String selectedLanguage = 'en';

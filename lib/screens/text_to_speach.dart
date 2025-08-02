@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_tts/flutter_tts.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:multilingual_text_to_speech/controllers/multilingual_provider.dart';
 import 'package:multilingual_text_to_speech/widgets/custom_button.dart';
 import 'package:multilingual_text_to_speech/widgets/spacer.dart';
@@ -21,6 +22,34 @@ class TTSScreen extends StatefulWidget {
 }
 
 class _TTSScreenState extends State<TTSScreen> {
+
+bool _hasShownVoiceWarning=false;
+
+ @override
+  void didChangeDependencies() {
+    // TODO: implement didChangeDependencies
+    super.didChangeDependencies();
+    if(!_hasShownVoiceWarning){
+      _hasShownVoiceWarning=true;
+      WidgetsBinding.instance.addPostFrameCallback((_){
+        Get.snackbar(
+          'Voice Info',
+          'This application only supports the female voice version.',
+          snackPosition: SnackPosition.TOP,
+          backgroundColor: AppColors.pink,
+          colorText: AppColors.white,
+          duration: Duration(seconds: 8),
+          isDismissible: true,
+          margin: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
+          borderRadius: 10.r,
+          icon: const Icon(Icons.info_outline, color: AppColors.white),
+          mainButton: TextButton(onPressed: (){
+            Get.closeCurrentSnackbar();
+          }, child:const Icon(Icons.close, color: Colors.white),),
+        );
+      });
+    }
+  }
   @override
   Widget build(BuildContext context) {
     final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
@@ -32,13 +61,13 @@ class _TTSScreenState extends State<TTSScreen> {
         child: AppBar(
           elevation: 0,
           automaticallyImplyLeading: false,
-          backgroundColor: AppColors.grey,
+          backgroundColor: AppColors.blue,
           centerTitle: true,
           title: Padding(
             padding: EdgeInsets.only(top: 20.h),
             child: customText(
               text: AppConstants.multilingualTTS,
-              color: AppColors.black,
+              color: AppColors.white,
               fontStyle: FontStyle.normal,
               fontSize: 26,
               fontWeight: FontWeight.w800,
@@ -53,6 +82,8 @@ class _TTSScreenState extends State<TTSScreen> {
           child: Form(
             key: _formKey,
             child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 verticalSpacer(50),
                 customTextFormField(
@@ -66,63 +97,47 @@ class _TTSScreenState extends State<TTSScreen> {
                   },
                 ),
                 verticalSpacer(20),
-                DropdownButtonFormField<String>(
-                  value: ttsProvider.availableOutputLanguages.contains(ttsProvider.selectedLanguage)
-                      ? ttsProvider.selectedLanguage
-                      : null,
-                  items: ttsProvider.availableOutputLanguages.map((lang) {
-                    final displayName = {
-                      'en': 'English',
-                      'fr': 'French',
-                      'es': 'Spanish',
-                      'de': 'German',
-                    }[lang]!;
-                    return DropdownMenuItem(
-                      value: lang,
-                      child: Text(displayName),
-                    );
-                  }).toList(),
-                  onChanged: (value) {
-                    if (value != null) {
-                      ttsProvider.updateSelectedLanguage(value);
-                    }
-                  },
-                  decoration: const InputDecoration(
-                    labelText: 'Translate & Speak in',
-                  ),
-                ),
 
-                /* DropdownButtonFormField<String>(
-                  value: ttsProvider.selectedLanguage,
-                  items: [
-                    DropdownMenuItem(value: 'en', child: Text('English')),
-                    DropdownMenuItem(value: 'fr', child: Text('French')),
-                    DropdownMenuItem(value: 'es', child: Text('Spanish')),
-                    DropdownMenuItem(value: 'de', child: Text('German')),
+                DropdownButtonFormField<String>(
+            value: ttsProvider.availableOutputLanguages.contains(ttsProvider.selectedLanguage)
+                ? ttsProvider.selectedLanguage
+                : null,
+            items: ttsProvider.availableOutputLanguages.map((lang) {
+              final languageMap = {
+                'en': {'label': 'English', 'flag': '🇺🇸'},
+                'fr': {'label': 'French', 'flag': '🇫🇷'},
+                'es': {'label': 'Spanish', 'flag': '🇪🇸'},
+                'de': {'label': 'German', 'flag': '🇩🇪'},
+              };
+              final display = languageMap[lang]!;
+
+              return DropdownMenuItem(
+                value: lang,
+                child: Row(
+                  children: [
+                    Text(display['flag']!, style: const TextStyle(fontSize: 24)),
+                    const SizedBox(width: 8),
+                    Text(display['label']!),
                   ],
-                  onChanged: (value) {
-                    if (value != null) {
-                      ttsProvider.updateSelectedLanguage(value);
-                    }
-                  },
-                  decoration: const InputDecoration(
-                    labelText: 'Translate & Speak in',
-                  ),
-                ),*/
+                ),
+              );
+            }).toList(),
+            onChanged: (value) {
+              if (value != null) {
+                ttsProvider.updateSelectedLanguage(value);
+              }
+            },
+            decoration: const InputDecoration(
+              labelText: 'Translate & Speak in',
+            ),
+          ),
+
                 verticalSpacer(20),
-                /*customButton(
-                  label: "Process Text",
-                  buttonColor: AppColors.grey,
-                  textColor: AppColors.black,
-                  onPressed: () => ttsProvider.processAndSpeak(
-                    ttsProvider.textController.text,
-                  ),
-                ),*/
-                // if(ttsProvider.hasSpoken)
+
                 customButton(
                   label: ttsProvider.isPlaying ? "Pause" : "Play",
-                  buttonColor: AppColors.grey,
-                  textColor: AppColors.black,
+                  buttonColor: AppColors.blue,
+                  textColor: AppColors.white,
                   icon: ttsProvider.isPlaying ? Icons.pause : Icons.play_arrow,
                   // onPressed: () => ttsProvider.togglePlayPause(),
                   onPressed: () => ttsProvider.handlePlayPauseUnified(),
@@ -135,16 +150,34 @@ class _TTSScreenState extends State<TTSScreen> {
                     color: AppColors.black,
                     fontSize: 16,
                     fontWeight: FontWeight.w900,
-                    fontStyle: FontStyle.italic,
+                    fontStyle: FontStyle.normal,
                   ),
-
                 if (ttsProvider.translatedText.isNotEmpty)
-                  customText(
-                    text: ("Translated Text: ${ttsProvider.translatedText}"),
-                    color: AppColors.black,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w900,
-                    fontStyle: FontStyle.italic,
+                  Padding(
+                    padding:  EdgeInsets.symmetric(vertical: 12.h, horizontal: 8.w),
+                    child: ConstrainedBox(
+                      constraints: const BoxConstraints(
+                        minHeight: 10,
+                        maxHeight: double.infinity,
+                        minWidth: double.infinity,
+                      ),
+                      child: Container(
+                        padding:  EdgeInsets.symmetric(vertical: 12.h, horizontal: 8.w),
+
+                        decoration: BoxDecoration(
+                          color: AppColors.grey.withOpacity(0.2),
+                          borderRadius: BorderRadius.circular(12.r),
+                          border: Border.all(color: AppColors.grey.withOpacity(0.4),),
+                        ),
+                        child: customText(
+                          text: "Translated Text: ${ttsProvider.translatedText}",
+                          color: AppColors.black,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w900,
+                          fontStyle: FontStyle.normal,
+                        ),
+                      ),
+                    ),
                   ),
                 verticalSpacer(20),
                 customText(
@@ -153,7 +186,7 @@ class _TTSScreenState extends State<TTSScreen> {
                   color: AppColors.black,
                   fontSize: 16,
                   fontWeight: FontWeight.w900,
-                  fontStyle: FontStyle.italic,
+                  fontStyle: FontStyle.normal,
                 ),
                // verticalSpacer(10),
                 Slider(
@@ -172,7 +205,7 @@ class _TTSScreenState extends State<TTSScreen> {
                   color: AppColors.black,
                   fontSize: 16,
                   fontWeight: FontWeight.w900,
-                  fontStyle: FontStyle.italic,
+                  fontStyle: FontStyle.normal,
                 ),
               //  verticalSpacer(10),
                 Slider(

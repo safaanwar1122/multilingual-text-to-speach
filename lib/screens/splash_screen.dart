@@ -15,25 +15,23 @@ class SplashScreen extends StatelessWidget {
     SystemChrome.setSystemUIOverlayStyle(
       SystemUiOverlayStyle(
         systemNavigationBarIconBrightness:
-        Theme.of(context).scaffoldBackgroundColor == AppColors.grey
+        Theme.of(context).scaffoldBackgroundColor == AppColors.blue
             ? Brightness.dark
             : Brightness.light,
-        statusBarColor: AppColors.grey,
-        systemNavigationBarColor: AppColors.grey,
+        statusBarColor: AppColors.blue,
+        systemNavigationBarColor: AppColors.blue,
       ),
     );
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Future.delayed(const Duration(seconds: 1), () {
         Get.offAll(() =>
         TTSScreen(),
-       //  TextToSpeachScreen()
-
         );
       });
     });
 
     return Scaffold(
-      backgroundColor: AppColors.grey,
+      backgroundColor: AppColors.blue,
       body: SingleChildScrollView(
         child: Padding(
           padding:  EdgeInsets.symmetric(horizontal: 20.w, vertical: 20.h),
@@ -46,24 +44,24 @@ class SplashScreen extends StatelessWidget {
 
                 customText(
                   text: AppConstants.multilingualTTS,
-                  color: AppColors.black,
-                  fontSize: 22,
+                  color: AppColors.white,
+                  fontSize: 30,
                   fontWeight: FontWeight.w900,
                   fontStyle: FontStyle.italic,
                 ),
-                verticalSpacer(70),
+                verticalSpacer(80),
                 customText(
                   text: "Test App",
-                  color: AppColors.white,
+                  color: AppColors.yellow,
                   fontSize: 22,
                   fontWeight: FontWeight.w900,
-                  fontStyle: FontStyle.italic,
+                  fontStyle: FontStyle.normal,
                 ),
-                // verticalSpacer(40),
+                 verticalSpacer(30),
                 customText(
                   text: "Developed by: Safa Anwar",
-                  color: AppColors.black,
-                  fontSize: 22,
+                  color: AppColors.white,
+                  fontSize: 24,
                   fontWeight: FontWeight.w900,
                   fontStyle: FontStyle.italic,
                 ),

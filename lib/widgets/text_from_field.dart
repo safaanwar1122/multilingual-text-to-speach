@@ -4,7 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 Widget customTextFormField({
   required TextEditingController controller,
   required String label,
-
+Widget? suffixIcon,
   required String? Function(String?)? validator,
 }) {
   return TextFormField(
@@ -18,6 +18,7 @@ Widget customTextFormField({
       labelText: label,
       border: OutlineInputBorder(),
       contentPadding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 14.h),
+   suffixIcon: suffixIcon,
     ),
   );
 }
